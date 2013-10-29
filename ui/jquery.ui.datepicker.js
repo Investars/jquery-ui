@@ -1678,7 +1678,7 @@ $.extend(Datepicker.prototype, {
 			">" + currentText + "</button>" : "") + (isRTL ? "" : controls) + "</div>" : "";
 
 		todayPanel = (showTodayPanel) ? "<div class='ui-datepicker-buttonpane ui-widget-content'><button type='button' class='ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all' data-handler='today hide' data-event='click'>" +
-			this.formatDate(todayButtonDateFormat, new Date(tempDate.setFullYear(), tempDate.getMonth(), tempDate.getDay())) +
+			this.formatDate(todayButtonDateFormat, today) +
 			"</button></div>" : "";
 
 		firstDay = parseInt(this._get(inst, "firstDay"),10);
@@ -1783,7 +1783,7 @@ $.extend(Datepicker.prototype, {
 			}
 			html += group;
 		}
-		html += buttonPanel;
+		html += buttonPanel + todayPanel;
 		inst._keyEvent = false;
 		return html;
 	},
