@@ -929,7 +929,7 @@ $.extend(Datepicker.prototype, {
 	},
 
 	/* Action for current link. */
-	_gotoToday: function(id) {
+	_gotoToday: function(id, close) {
 		var date,
 			target = $(id),
 			inst = this._getInst(target[0]);
@@ -944,8 +944,13 @@ $.extend(Datepicker.prototype, {
 			inst.drawMonth = inst.selectedMonth = date.getMonth();
 			inst.drawYear = inst.selectedYear = date.getFullYear();
 		}
-		this._notifyChange(inst);
-		this._adjustDate(target);
+
+		if (close) {
+			this._setDate(inst, date);
+		} else {
+			this._notifyChange(inst);
+			this._adjustDate(target);
+		}
 	},
 
 	/* Action for selecting a new month/year. */
@@ -1561,6 +1566,16 @@ $.extend(Datepicker.prototype, {
 				today: function () {
 					$.datepicker._gotoToday(id);
 				},
+				"today hide": function () {
+					$.datepicker._gotoToday(id, true);
+					$.datepicker._hideDatepicker();
+					return false;
+				},
+				"hide today": function () {
+					$.datepicker._gotoToday(id, true);
+					$.datepicker._hideDatepicker();
+					return false;
+				},
 				selectDay: function () {
 					$.datepicker._selectDay(id, +this.getAttribute("data-month"), +this.getAttribute("data-year"), this);
 					return false;
@@ -1585,7 +1600,7 @@ $.extend(Datepicker.prototype, {
 			monthNames, monthNamesShort, beforeShowDay, showOtherMonths,
 			selectOtherMonths, defaultDate, html, dow, row, group, col, selectedDate,
 			cornerClass, calender, thead, day, daysInMonth, leadDays, curRows, numRows,
-			printDate, dRow, tbody, daySettings, otherMonth, unselectable,
+			printDate, dRow, tbody, daySettings, otherMonth, unselectable, todayPanel,
 			tempDate = new Date(),
 			today = this._daylightSavingAdjust(
 				new Date(tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate())), // clear time
@@ -1602,12 +1617,19 @@ $.extend(Datepicker.prototype, {
 			minDate = this._getMinMaxDate(inst, "min"),
 			maxDate = this._getMinMaxDate(inst, "max"),
 			drawMonth = inst.drawMonth - showCurrentAtPos,
-			drawYear = inst.drawYear;
+			drawYear = inst.drawYear,
+			showTodayPanel = this._get(inst, "showTodayPanel"),
+			todayButtonDateFormat = this._get(inst, "todayButtonDateFormat");
 
 		if (drawMonth < 0) {
 			drawMonth += 12;
 			drawYear--;
 		}
+
+		if (!todayButtonDateFormat) {
+			todayButtonDateFormat = this._get(inst, "dateFormat");
+		}
+
 		if (maxDate) {
 			maxDraw = this._daylightSavingAdjust(new Date(maxDate.getFullYear(),
 				maxDate.getMonth() - (numMonths[0] * numMonths[1]) + 1, maxDate.getDate()));
@@ -1654,6 +1676,10 @@ $.extend(Datepicker.prototype, {
 		buttonPanel = (showButtonPanel) ? "<div class='ui-datepicker-buttonpane ui-widget-content'>" + (isRTL ? controls : "") +
 			(this._isInRange(inst, gotoDate) ? "<button type='button' class='ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all' data-handler='today' data-event='click'" +
 			">" + currentText + "</button>" : "") + (isRTL ? "" : controls) + "</div>" : "";
+
+		todayPanel = (showTodayPanel) ? "<div class='ui-datepicker-buttonpane ui-widget-content'><button type='button' class='ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all' data-handler='today hide' data-event='click'>" +
+			this.formatDate(todayButtonDateFormat, new Date(tempDate.setFullYear(), tempDate.getMonth(), tempDate.getDay())) +
+			"</button></div>" : "";
 
 		firstDay = parseInt(this._get(inst, "firstDay"),10);
 		firstDay = (isNaN(firstDay) ? 0 : firstDay);
