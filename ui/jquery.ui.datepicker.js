@@ -104,6 +104,7 @@ function Datepicker() {
 		altFormat: "", // The date format to use for the alternate field
 		constrainInput: true, // The input is constrained by the current date format
 		showButtonPanel: false, // True to show button panel, false to not show it
+		showTodayPanel: false,
 		autoSize: false, // True to size the input for the date format, false to leave as is
 		disabled: false // The initial disabled state
 	};
@@ -1677,7 +1678,7 @@ $.extend(Datepicker.prototype, {
 			(this._isInRange(inst, gotoDate) ? "<button type='button' class='ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all' data-handler='today' data-event='click'" +
 			">" + currentText + "</button>" : "") + (isRTL ? "" : controls) + "</div>" : "";
 
-		todayPanel = (showTodayPanel) ? "<div class='ui-datepicker-buttonpane ui-widget-content'><button type='button' class='ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all' data-handler='today hide' data-event='click'>" +
+		todayPanel = (showTodayPanel) ? "<div class='ui-datepicker-buttonpane ui-widget-content'><button type='button' class='ui-datepicker-today ui-state-default ui-priority-primary ui-corner-all' data-handler='today hide' data-event='click'>" +
 			this.formatDate(todayButtonDateFormat, today) +
 			"</button></div>" : "";
 
