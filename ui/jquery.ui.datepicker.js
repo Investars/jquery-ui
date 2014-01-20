@@ -948,6 +948,10 @@ $.extend(Datepicker.prototype, {
 
 		if (close) {
 			this._setDate(inst, date);
+
+			if (inst.input) {
+				inst.input.trigger("change");
+			}
 		} else {
 			this._notifyChange(inst);
 			this._adjustDate(target);
